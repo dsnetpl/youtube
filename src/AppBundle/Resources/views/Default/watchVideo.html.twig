@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>{{ file.title }}</h1>
+    <div style="text-align:center;">
+        <video controls >
+            <source src="/download/{{ file.filename }}" />
+            {#<source src="{{ path('download_file', {id: file.id}) }}" />#}
+        </video>
+    </div>
+{% endblock %}

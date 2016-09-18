@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+        <script src="{{ asset('js/jquery-2.1.3.min.js') }}"></script>
+
+<style type="text/css">
+div.flash-notice {
+    border: green 2px dotted;
+    padding: 15px;
+    background: #efe;
+}
+div.flash-warn {
+    border: orange 2px dotted;
+    padding: 15px;
+    background: #ffe;
+}
+</style>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-60740055-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head>
+    <body>
+    <div class="container">
+        {% for flashMessage in app.session.flashbag.get('notice') %}
+            <div class="flash-notice">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('warn') %}
+            <div class="flash-warn">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+        <h1 style="margin-bottom: 40px;"><a href="/">Pobieranie z YouTube</a>
+        <sup style="color:orange"><strong>BETA</strong></sup>
+            <span class="pull-right">
+                <a class="btn" href="http://dc.ms/">Zobacz też: DC.MS</a>
+                <a href="{{ path('list_files') }}" class="btn btn-success">POBRANE PLIKI</a>
+                <a href="{{ path('list_queue') }}" class="btn btn-primary">KOLEJKA</a>
+            </span>
+
+        </h1>
+        {% block body %}{% endblock %}
+        <script src="/js/bootstrap.min.js"></script>
+        {% block javascripts %}{% endblock %}
+    </div>
+
+    </body>
+</html>

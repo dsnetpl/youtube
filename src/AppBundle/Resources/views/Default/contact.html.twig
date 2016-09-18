@@ -1,0 +1,48 @@
+<div id="contact-container" class="col-xs-6 col-xs-offset-3">
+    {% if app.session.flashbag.peekAll|length > 0 %}
+        <div class="row">
+            <div class="col-xs-12" id="flash-form">
+                {% for type in ['danger', 'success', 'notice'] %}
+                    {% for flashMessage in app.session.flashbag.get(type) %}
+                        <p class="alert alert-{{ type }}">{{ flashMessage }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <h3>Uwagi, komentarze:</h3>
+    {{ form_start(form, {attr:{'id':'form-contact'}}) }}
+    {{ form_widget(form.message) }}
+    {{ form_end(form) }}
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var timeout = null;
+        $("#form-contact").submit(function() {
+            var data = $('#form-contact').serialize();
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{{ path('contact') }}",
+                data: data,
+                success: function(data) {
+                    $('#contact-container').replaceWith(data);
+                    timeout = setTimeout(function() {
+                        $("#flash-form").fadeOut();
+                    }, 3000);
+
+
+
+
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<p><span class="pull-right">Pobrano łącznie z yt: <strong>{{ downloaded }}</strong> GiB</span><span>Filtruj pobrane pliki:</span></p>
+<input id="filelist_filter" type="search" class="form-control" placeholder="Wyszukaj..."/>
+
+    <table class="table">
+        <tr>
+            <th>Nazwa</th>
+            <th>Rozdzielczość</th>
+            <th>Wielkość</th>
+            <th>Długość</th>
+{#            <th>Pobrane</th>#}
+            <th>Akcje</th>
+        </tr>
+        <tbody id="filelist">
+            {{ render(controller("AppBundle:Default:_filelist", { page: page })) }}
+        </tbody>
+    </table>
+   <noscript><div class="text-center">
+   {% if maxPages > 1 %}
+<ul class="pagination pagination-sm">
+    <li {{ page == 1 ? 'class="disabled"' }}>
+        <a href="{{ path('list_files', {page: page-1 < 1 ? 1 : page-1}) }}">«</a>
+    </li>
+
+    {% for i in 1..maxPages %}
+    <li {{ page == i ? 'class="active"' }}>
+    <a href="{{ path('list_files', {page: i}) }}">{{ i }}</a>
+    </li>
+    {% endfor %}
+
+    <li {{ page == maxPages ? 'class="disabled"' }}>
+        <a href="{{ path('list_files', {page: page+1 <= maxPages ? page+1 : page}) }}">»</a>
+    </li>
+</ul>
+{% endif %}
+
+   
+    </div></noscript>
+
+
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+	var win = $(window);
+	var ajaxRunning = false;
+	var done = false;
+	win.scroll(function() {
+
+		if ($(document).height() - win.height() == win.scrollTop() && done == false && ajaxRunning == false) {
+			var rowCount = $('#filelist tr').length;
+			ajaxRunning = true;
+			$.ajax({
+			    method: 'GET',
+				url: '{{ path('_filelist') }}',
+				data: { offset: rowCount, limit: 20},
+				dataType: 'html',
+				success: function(html) {
+					if (!html) {
+					    done = true;
+					}
+					else {
+					$('#filelist').append(html);
+					}
+				},
+				complete: function() {
+                    ajaxRunning = false;
+                }
+			});
+		}
+	});
+});
+
+
+$('#filelist_filter').on('change input', function() {
+    var q = $('#filelist_filter').val();
+    $.get('{{ path('_filelist') }}', {query: q}, function( data ) {
+        $( "#filelist" ).html( data );
+    });
+});
+</script>
+{% endblock %}
+

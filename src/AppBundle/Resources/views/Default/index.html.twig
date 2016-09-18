@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h3>Serwis pozwalajacy na pobranie i oglądnięcie wideo z YouTube bez zbędnego buforowania.</h3>
+    <p>Nie możesz doczekać się na załadowanie ulubionego filmu z kotami? Pobierz go raz na dysk i oglądaj wielokrotnie
+        bez żadnych problemów! Pobierając tu nie zużywasz też transferu łącza, przyspieszając internet. Przed
+        pobraniem musisz zalogować się do panelu użytkownika aby upewnić się, ze jesteś mieszkańcem.</p>
+    <p>Pamiętaj! Zapoznaj się z licencją filmu przed pobraniem, nie każdy materiał wideo znaleziony w sieci może być
+        swobodnie pobierany i udostępniany!</p>
+    <h2>Uwaga!</h2>
+    <p>Z dniem 2016-07-04 wchodzą zasady:</p>
+    <ul>
+        <li>Nie można pobierać plików który czas trwania przekracza 2h</li>
+        <li>Każdy użytkownik może pobrać z serwisu youtube max 10GB tygodniowo, po przekroczeniu tego limitu nie będzie można dodawać nowych plików do kolejki</li>
+        <li>Użytkownik może dodać tylko jeden plik do kolejki. Aby dodać kolejny, trzeba poczekać aż poprzedni się pobierze</li>
+    </ul>
+    {% if is_granted('ROLE_USER') %}
+        {{ form_start(form) }}
+        <h2 class="form-signin-heading"></h2>
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    {% else %}
+        <a href="/login" class="btn btn-lg btn-primary btn-block">Zaloguj z użyciem Panelu</a>
+    {% endif %}
+	
+	<div>
+            {{ render(controller("AppBundle:Default:contact")) }}
+        </div>
+
+{% endblock %}

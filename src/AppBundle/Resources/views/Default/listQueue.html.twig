@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{% if files|length > 0 %}
+    <table class="table">
+        <tr>
+            <th>Nazwa</th>
+            <th>Rozdzielczość</th>
+            <th>Wielkość</th>
+            <th>Czas</th>
+            <th>Progress</th>
+        </tr>
+        {% for file in files %}
+            <tr>
+                <td><a href="{{ path('yt_info', {'hash': file.hash}) }}">{{ file.title }}</a></td>
+                <td>{% if file.format == 'mp3' %}mp3{% else %}{{ file.width }} x {{ file.height }}{% endif %}</td>
+                <td style="text-align: right;">{% if not file.progress %}~{% endif %}{{ (file.filesize / 1024) |round(1) }} MB</td>
+                <td style="text-align: right;">{% if file.length %}{{ file.length|time }}{% endif %}</td>
+                <td style="text-align: right;">{{ file.progress }}%</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+<p>Kolejka pobierania jest obecnie pusta.</p>
+{% endif %}
+
+{#
+<p>Status łącza internetowego: <span id="uplink_status"></span></p>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $.get( "{{ path('dsnet_network_packet_loss') }}", function( data ) {
+        if (data > 1) {
+            $( "#uplink_status" ).html( '<span style="display: inline-block; background-color: #fec; padding: 2px 5px">Obciążone, kolejka wstrzymana</span>' );
+        } else {
+            $( "#uplink_status" ).html( '<span style="display: inline-block; background-color: #cfc; padding: 2px 5px">OK, pobieranie możliwe</span>' );
+        }
+    });
+});
+
+</script>
+#}
+
+{% endblock body %}

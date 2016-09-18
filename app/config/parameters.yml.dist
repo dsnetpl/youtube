@@ -1,0 +1,27 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_driver: pdo_pgsql
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: youtube
+    database_user: youtube
+    database_password: youtube
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    locale: pl
+    secret: f0c6e3cf49df2c5ba5ac96a45855186df256fa3b
+
+    oauth_client_id:      oauth-client-id-from-dsnet
+    oauth_client_secret:  oauth-client-secret-from-dsnet
+    panel_base_url:       "https://panel.dsnet.agh.edu.pl"
+
+    yt_proxy: ~
+    contact.from: noreply@domain
+    contact.to: contact@domain
+    loss_provider: http://localhost/loss.php
+    storage: /srv/youtube/download/
+    download_limit: 10240
+    download_concurrent: 1
+    download_duration: 120
