@@ -9,6 +9,9 @@ use Buzz\Exception\RequestException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,8 +56,8 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         $form = $this->createFormBuilder()
-            ->add('address', 'url', array('label' => 'Wprowadź poniżej link do filmu na youtube:', 'attr' => ['placeholder' => 'https://www.youtube.com/watch?v=...'], 'constraints' => [new Length(['max' => 100])]))
-            ->add('Dalej', 'submit', array('attr' => array('class' => 'btn btn-lg btn-primary btn-block')))
+            ->add('address', UrlType::class, array('label' => 'Wprowadź poniżej link do filmu na youtube:', 'attr' => ['placeholder' => 'https://www.youtube.com/watch?v=...'], 'constraints' => [new Length(['max' => 100])]))
+            ->add('Dalej', SubmitType::class, array('attr' => array('class' => 'btn btn-lg btn-primary btn-block')))
             ->getForm();
 
         $form->handleRequest($request);
@@ -334,7 +337,7 @@ class DefaultController extends Controller
     {
         /** @var Form $form */
         $form = $this->createFormBuilder()
-            ->add('message', 'textarea', array(
+            ->add('message', TextareaType::class, array(
                 'label' => 'Treść',
                 'required' => true,
                 'constraints' => array(
