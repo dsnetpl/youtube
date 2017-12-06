@@ -69,6 +69,11 @@ class DefaultController extends Controller
             $process = $this->yt_dl(array('-s', '--get-id', '--', $address));
             $process->run();
             $id = trim($process->getOutput());
+            
+            if(!$id){
+                $this->addFlash("warn", "Nie udało się przetworzyć pliku");
+                return $this->redirectToRoute('homepage');
+            }
 
             return $this->redirect($this->generateUrl('yt_info', array('hash' => $id, 'new' => 1)));
         }
