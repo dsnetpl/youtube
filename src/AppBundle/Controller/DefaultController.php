@@ -349,7 +349,7 @@ class DefaultController extends Controller
                     new NotBlank(),
                 ),
             ))
-            ->add('submit', 'submit', array(
+            ->add('submit', SubmitType::class, array(
                 'attr' => array(
                     'class' => 'btn btn-sm btn-success btn-block',
                 ),

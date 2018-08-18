@@ -3,35 +3,36 @@
     "license": "proprietary",
     "type": "project",
     "autoload": {
-        "psr-0": {
-            "": "src/",
-            "SymfonyStandard": "app/"
-        }
+        "psr-4": { "": "src/" },
+        "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
+    },
+    "autoload-dev": {
+        "psr-4": { "Tests\\": "tests/" }
     },
     "require": {
         "php": ">=5.6.0",
-        "symfony/symfony": "2.8.*",
+        "symfony/symfony": "~3.0",
         "doctrine/orm": "~2.4",
         "doctrine/dbal": "~2.4",
         "doctrine/doctrine-bundle": "~1.2",
         "twig/extensions": "~1.0",
-        "symfony/assetic-bundle": "~2.3",
         "symfony/swiftmailer-bundle": "~2.3",
-        "symfony/monolog-bundle": "~2.4",
-        "sensio/distribution-bundle": "~3.0,>=3.0.12",
+        "symfony/monolog-bundle": "~3.0",
+        "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": " ~2.0",
-        "webdevvie/pheanstalk-task-queue-bundle": "0.4.0.x-dev",
+        "webdevvie/pheanstalk-task-queue-bundle": "dev-feature/symfony3-compatibility",
         "sensio/buzz-bundle": "~1.1",
         "doctrine/migrations": "~1.1",
         "doctrine/doctrine-migrations-bundle": "~1.2",
         "stof/doctrine-extensions-bundle": "~1.2",
         "knplabs/knp-paginator-bundle": "~2.4",
-        "genedys/csrf-route-bundle": "~1.0"
-
+        "genedys/csrf-route-bundle": "~3.0",
+        "symfony/assetic-bundle": "~2.8",
+        "kriswallsmith/buzz": "0.16.1"
     },
     "require-dev": {
-        "sensio/generator-bundle": "~2.3"
+        "sensio/generator-bundle": "~3.0"
     },
     "scripts": {
         "post-root-package-install": [
@@ -59,7 +60,10 @@
     },
     "extra": {
         "symfony-app-dir": "app",
+        "symfony-bin-dir": "bin",
+        "symfony-var-dir": "var",
         "symfony-web-dir": "web",
+        "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"

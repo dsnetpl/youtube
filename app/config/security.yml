@@ -24,7 +24,7 @@ security:
         # disables authentication for assets and the profiler, adapt it according to your needs
         secured_area:
             form_login:
-                csrf_provider: form.csrf_provider
+                csrf_token_generator: security.csrf.token_manager
                 login_path: /login
                 check_path: /login_check
             pattern:      ^/
