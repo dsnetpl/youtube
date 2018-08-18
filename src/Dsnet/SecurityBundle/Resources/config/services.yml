@@ -1,7 +1,7 @@
 services:
     dsnet_security.panel_resource_owner:
         class: Dsnet\SecurityBundle\Services\PanelResourceOwner
-        arguments: ["@buzz", "@router", "%dsnet_security.config%"]
+        arguments: ["@buzz", "@router.default", "%dsnet_security.config%"]
 
     dsnet_security.security.authentication.provider:
         class: Dsnet\SecurityBundle\Security\Authentication\Provider\OAuthProvider
@@ -9,4 +9,4 @@ services:
 
     dsnet_security.security.authentication.listener:
         class: Dsnet\SecurityBundle\Security\Firewall\OAuthListener
-        arguments: ["@security.context", "@security.authentication.manager", "@dsnet_security.panel_resource_owner", "@session.flash_bag"]
+        arguments: ["@security.token_storage", "@security.authentication.manager", "@dsnet_security.panel_resource_owner", "@session.flash_bag"]
