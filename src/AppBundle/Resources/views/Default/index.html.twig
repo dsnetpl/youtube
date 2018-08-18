@@ -15,17 +15,33 @@
         <li>Każdy użytkownik może pobrać z serwisu youtube max 10GB tygodniowo, po przekroczeniu tego limitu nie będzie można dodawać nowych plików do kolejki</li>
         <li>Użytkownik może dodać tylko jeden plik do kolejki. Aby dodać kolejny, trzeba poczekać aż poprzedni się pobierze</li>
     </ul>
+
     {% if is_granted('ROLE_USER') %}
-        {{ form_start(form) }}
-        <h2 class="form-signin-heading"></h2>
-        {{ form_widget(form) }}
-        {{ form_end(form) }}
+    <div id="forms">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#youtube" aria-controls="youtube" role="tab" data-toggle="tab">Youtube</a></li>
+            <li role="presentation"><a href="#vimeo" aria-controls="vimeo" role="tab" data-toggle="tab">Vimeo</a></li>
+        </ul>
+
+        <!-- Tab panels -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="youtube">
+                {{ render(controller('AppBundle:Download:processYoutubeForm')) }}
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="vimeo">
+                {{ render(controller('AppBundle:Download:processVimeoForm')) }}
+            </div>
+        </div>
+    </div>
     {% else %}
         <a href="/login" class="btn btn-lg btn-primary btn-block">Zaloguj z użyciem Panelu</a>
     {% endif %}
-	
-	<div>
-            {{ render(controller("AppBundle:Default:contact")) }}
-        </div>
+
+
+    <div>
+        {{ render(controller("AppBundle:Default:contact")) }}
+    </div>
 
 {% endblock %}

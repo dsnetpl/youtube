@@ -21,8 +21,8 @@ class PanelResourceOwner
     public function __construct(Browser $browser, Router $router, array $options)
     {
         $this->browser = $browser;
-        $this->options = $options;
         $this->router = $router;
+        $this->options = $options;
     }
 
     public function getAuthorizationUrl()
