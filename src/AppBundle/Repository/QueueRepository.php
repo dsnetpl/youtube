@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Media;
 use AppBundle\Entity\Queue;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityRepository;
@@ -23,7 +24,10 @@ class QueueRepository extends ServiceEntityRepository
     public function getFilesDownloadedQuery($page = 1, $limit = 100)
     {
         return $query = $this->createQueryBuilder('q')
-             ->select('q, COALESCE(q.lastDownload, q.finishedAt) as HIDDEN columnOrder')
+             ->select('q.filesize', 'q.id', 'q.downloads',
+                      'COALESCE(q.lastDownload, q.finishedAt) as HIDDEN columnOrder',
+                      'm.json')
+             ->leftJoin(Media::class, 'm', 'WITH', 'm.hash=q.hash')
              ->where('q.finishedAt is not null')
              ->andWhere('q.deletedAt is null')
              ->orderBy('columnOrder', 'DESC')
