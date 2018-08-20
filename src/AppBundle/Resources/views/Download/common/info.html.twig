@@ -3,11 +3,18 @@
 {% block body %}
     <h3>{{ title }}</h3>
 
-    <div style="background: #eee; border: 1px solid #ddd; margin-bottom:10px; padding: 5px; min-height: 192px;">
-        <img src="https://i.ytimg.com/vi/{{ id }}/mqdefault.jpg" style="float:right; padding-left: 5px;"/>
-
-        <p>{{ description|truncate(500, true)|nl2br }}</p>
-        <p>Długość: {{ duration|time }}</p>
+    <div class="panel-info">
+        <div class="description">
+            <p>{{ description|truncate(500, true)|nl2br }}</p>
+            <p>Długość: {{ duration|time }}</p>
+            <div class="categories">
+                <h4>Kategorie:</h4>
+                {% for category in categories %}
+                    <span class="label label-default">{{ category.name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <img src="{{ thumbnail }}" class="video-thumbnail"/>
     </div>
 
     {% for format in choices if format.preferred %}

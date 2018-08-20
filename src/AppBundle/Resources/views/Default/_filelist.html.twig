@@ -2,7 +2,6 @@
 {% for file in files %}
     <tr>
         {% set json = file.json|jsonDecode %}
-        {{ dump(json) }}
         <td>
             <img src="{{ json.thumbnail }}" class="filelist_thumbnail" alt="thumbnail">
         </td>

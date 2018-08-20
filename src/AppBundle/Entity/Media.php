@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -71,6 +72,18 @@ class Media
      * @ORM\JoinColumn(name="service_id", referencedColumnName="id")
      */
     private $service;
+
+    /**
+     * @var Media
+     *
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Category")
+     */
+    private $categories;
+
+    public function __construct()
+    {
+        $this->categories = new ArrayCollection();
+    }
 
     /**
      * Get id.
@@ -240,5 +253,49 @@ class Media
     public function setService(Service $service)
     {
         $this->service = $service;
+    }
+
+    /**
+     * @param Category $category
+     * @return Media
+     */
+    public function addCategory(Category $category): Media
+    {
+        if ($this->categories->contains($category)) {
+            return $this;
+        }
+        $this->categories->add($category);
+
+        return $this;
+    }
+
+    /**
+     * @param Category $category
+     * @return Media
+     */
+    public function removeCategory(Category $category): Media
+    {
+        $this->categories->remove($category);
+
+        return $this;
+    }
+
+    /**
+     * @param array|ArrayCollection $categories
+     * @return Media
+     */
+    public function setCategories($categories): Media
+    {
+        $this->categories = $categories;
+
+        return $this;
+    }
+
+    /**
+     * @return Media
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 }

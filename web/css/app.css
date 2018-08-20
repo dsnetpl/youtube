@@ -11,3 +11,22 @@
 .downloaded_list > thead > tr > th {
     text-align: center;
 }
+
+.panel-info {
+    background: #eee;
+    border: 1px solid #ddd;
+    margin-bottom:10px;
+    padding: 5px;
+    min-height: 192px;
+    display: flex;
+}
+
+.panel-info .description {
+    flex: 3;
+}
+
+.panel-info img {
+    padding-left: 5px;
+    object-fit: scale-down;
+    flex: 1;
+}
