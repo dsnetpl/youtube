@@ -1,4 +1,7 @@
 {{ form_start(form) }}
 <h2 class="form-signin-heading"></h2>
-{{ form_widget(form) }}
+{{ form_row(form.address) }}
+{{ form_row(form.category) }}
+{{ form_row(form.process) }}
+{{ form_rest(form) }}
 {{ form_end(form) }}

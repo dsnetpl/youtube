@@ -68,7 +68,7 @@ class DownloadController extends Controller
         $this->downloadService = $downloadService;
     }
 
-    private function processForm($form, string $action, string $route_info, Request $request)
+    private function processForm($form, string $action, string $route_info, $site, Request $request)
     {
         $form = $this->createForm($form, null, [
             'action' => $this->generateUrl($action)
@@ -79,10 +79,13 @@ class DownloadController extends Controller
         if ($form->isValid()) {
             $data = $form->getData();
             $address = $data['address'];
+            $categories = $data['category'];
 
             $process = $this->downloadService->yt_dl(array('--get-id', '--', $address));
             $process->run();
             $id = trim($process->getOutput());
+
+            $this->checkMediaExist($id, $categories, $site);
 
             if(!$id){
                 $this->addFlash("warn", "Nie udało się przetworzyć pliku");
@@ -103,7 +106,7 @@ class DownloadController extends Controller
      */
     public function processVimeoFormAction(Request $request)
     {
-        return $this->processForm(VimeoType::class, 'vimeo_form_process', 'vimeo_info', $request);
+        return $this->processForm(VimeoType::class, 'vimeo_form_process', 'vimeo_info', 'vimeo', $request);
     }
 
     /**
@@ -112,7 +115,7 @@ class DownloadController extends Controller
      */
     public function processYoutubeFormAction(Request $request)
     {
-        return $this->processForm(YoutubeType::class, 'youtube_form_process', 'yt_info', $request);
+        return $this->processForm(YoutubeType::class, 'youtube_form_process', 'yt_info', 'youtube', $request);
     }
 
     /**
@@ -121,10 +124,7 @@ class DownloadController extends Controller
      */
     public function infoVimeoAction($hash, $new = null)
     {
-        $vimeo_url = 'https://vimeo.com/' . $hash;
-        $params = ['-s', '-r', '1M', '-j', '--', $vimeo_url];
-
-        return $this->info($params, $hash, $new);
+        return $this->info('vimeo', $hash, $new);
     }
 
     /**
@@ -133,9 +133,22 @@ class DownloadController extends Controller
      */
     public function infoYoutubeAction($hash, $new = null)
     {
-        $params = array('--youtube-skip-dash-manifest', '-s', '-r', '1M', '-j', '--', $hash);
+        return $this->info('youtube', $hash, $new);
+    }
 
-        return $this->info($params, $hash, $new);
+    private function prepareInfoParams($hash, $site = 'youtube')
+    {
+        $params = [];
+        if ($site === 'youtube') {
+            $params = ['--youtube-skip-dash-manifest', '-s', '-r', '1M', '-j', '--', $hash];
+        }
+        else if ($site === 'vimeo') {
+            $vimeo_url = 'https://vimeo.com/' . $hash;
+            $params = ['-s', '-r', '1M', '-j', '--', $vimeo_url];
+        }
+
+        return $params;
+
     }
 
     /**
@@ -154,19 +167,33 @@ class DownloadController extends Controller
         return $this->queue($hash, $format, 'yt_info');
     }
 
-    private function info(array $execute_params, string $hash, $new = null)
+    private function checkMediaExist(string $hash, $categories = null, string $page = 'youtube')
     {
+
+        var_dump($categories);
+
         /** @var Media $media */
         $media = $this->media->findOneByHash($hash);
+
+
         if (!$media) {
             $media = new Media();
             $media->setHash($hash);
             $media->setCreatedBy($this->downloadService->getUser());
+
+            var_dump('new');
+
             $this->entityManager->persist($media);
         }
 
-        if (!$media->getRefreshedAt() || $media->getRefreshedAt() < new \DateTime('-7 days')) {
-            $process = $this->yt_dl($execute_params);
+        $new_or_old = !$media->getRefreshedAt() || $media->getRefreshedAt() < new \DateTime('-7 days');
+
+        if ($categories) {
+            $this->addCategories($media, $categories);
+        }
+
+        if ($new_or_old) {
+            $process = $this->downloadService->yt_dl($this->prepareInfoParams($hash, $page));
 //         $process = $this->yt_dl(array('-s','-r', '1M', '-j', '-f', '[tbr>200]', $hash));
 
             $process->run();
@@ -178,10 +205,33 @@ class DownloadController extends Controller
             }
             $media->setRefreshedAt(new \DateTime());
             $media->setPopularity($media->getPopularity() + 1);
+
             $this->entityManager->flush();
-        } elseif ($new) {
+        }
+
+        if ($categories && !$new_or_old) {
+            $this->entityManager->flush();
+        }
+
+        return $media;
+
+    }
+
+    private function addCategories($object, $categories)
+    {
+        foreach ($categories as $category) {
+            $object->addCategory($category);
+        }
+    }
+
+    private function info(string $site, string $hash, $new = null)
+    {
+        $media = $this->checkMediaExist($hash, null, $site);
+
+        if ($new) {
             $this->media->increasePopularity($media);
         }
+
         $arr = $media->getJson();
         if (!$arr) {
             $this->addFlash('notice', 'Niepoprawny link do video / problem z video');
@@ -189,6 +239,7 @@ class DownloadController extends Controller
             return $this->redirectToRoute('homepage');
         }
         $arr = json_decode($arr);
+
         $ret['title'] = $arr->title;
         $ret['id'] = $hash;
         $ret['duration'] = $arr->duration;
@@ -221,6 +272,9 @@ class DownloadController extends Controller
         $choices['mp3']->size = 0;
         $ret['choices'] = $choices;
         $ret['description'] = $arr->description;
+        $ret['thumbnail'] = $arr->thumbnail;
+        $ret['categories'] = $media->getCategories();
+
 
         $ret['files'] = array();
 
