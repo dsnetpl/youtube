@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>{{ title }}</h3>
+
+    <div style="background: #eee; border: 1px solid #ddd; margin-bottom:10px; padding: 5px; min-height: 192px;">
+        <img src="https://i.ytimg.com/vi/{{ id }}/mqdefault.jpg" style="float:right; padding-left: 5px;"/>
+
+        <p>{{ description|truncate(500, true)|nl2br }}</p>
+        <p>Długość: {{ duration|time }}</p>
+    </div>
+
+    {% for format in choices if format.preferred %}
+        <p style="clear:both">
+            {% set name = '' %}
+            {% if files[format.format_id] is defined %}
+                {% set file = files[format.format_id] %}
+                {% if file.finishedAt %}
+                    <a class="btn btn-success btn-large btn-block" href="{{ path('download_file', {'id': file.id}) }}">Pobierz preferowany {{ format.name }} {{ (file.filesize / 1024) |round(1) }} MB</a>
+                    <a class="btn btn-primary btn-large btn-block" href="{{ path('watch_video', {'id': file.id}) }}">Oglądaj preferowany {{ format.name }} {{ (file.filesize / 1024) |round(1) }} MB</a>
+                {% elseif file.progress > 0 %}
+                    <span class="alert alert-success" style="display:block;">Preferowany format ({{ format.name }}  {{ (file.filesize / 1024) |round(1) }} MB) jest obecnie pobierany, progress: {{ file.progress }}%</span>
+                {% else %}
+                    <span class="alert alert-success" style="display:block;">Preferowany format ({{ format.name }} {{ format.size }}) został już dodany do kolejki</span>
+                {% endif %}
+            {% else %}
+                <a href="{{ path('yt_queue', {'hash':id, format:format.format_id}) }}"
+                   class="btn btn-primary btn-large btn-block">
+                    Dodaj do kolejki preferowany  {{ format.name }} {{ format.size }}
+                </a>
+            {% endif %}
+
+        </p>
+    {% endfor %}
+    {#
+    <p>Status łącza internetowego:<span id="uplink_status"></span></p>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $.get( "{{ path('dsnet_network_packet_loss') }}", function( data ) {
+            if (data > 1) {
+                $( "#uplink_status" ).html( '<span style="display: inline-block; background-color: #fec; padding: 2px 5px">Obciążone, kolejka wstrzymana</span>' );
+            } else {
+                $( "#uplink_status" ).html( '<span style="display: inline-block; background-color: #cfc; padding: 2px 5px">OK, pobieranie możliwe</span>' );
+            }
+        });
+    });
+
+    </script>
+
+    #}
+    <h3>Dostępne formaty:</h3>
+
+    <table style="clear:both" class="table table-condensed table-striped">
+        <thead>
+        <tr>
+            <td>Typ</td>
+            <td>Wymiary</td>
+            <td>Format</td>
+            {#            <td>Uwagi</td>
+                        <td>VC</td>
+                        <td>AC</td>
+                        <td>FPS</td>
+                        <td>kbit/s</td>
+                        <td>ABR</td>
+                        <td>VBR</td>
+            #}
+            <td>Rozmiar</td>
+            <td>Akcje</td>
+        </tr>
+        </thead>
+        {% for format in choices if not (format.format_note|default('') starts with 'DASH') and (format.ext == 'mp4' or format.ext == 'mp3') %}
+            <tr style="{% if format.preferred %} font-weight: bold;{% endif %}">
+                <td>{{ format.ext }}</td>
+                <td>{% if format.width is defined and format.width %}{{ format.width }}x{{ format.height }}{% endif %}</td>
+                <td>{{ format.format }}</td>
+                {#                <td>{{ format.format_note|default('') }}</td>
+                                <td>{{ format.vcodec|default('') }}</td>
+                                <td>{{ format.acodec|default('') }}</td>
+                                <td>{{ format.fps|default('') }}</td>
+                                <td>{% if format.tbr is defined and format.tbr %}{{ format.tbr }}{% else %}{% endif %}</td>
+                                <td>{% if format.abr is defined and format.abr %}{{ format.abr }}{% else %}{% endif %}</td>
+                                <td>{% if format.vbr is defined and format.vbr %}{{ format.vbr }}{% else %}{% endif %}</td>
+                #}
+                {% set file = null %}
+                {% if files[format.format_id] is defined %}
+                    {% set file = files[format.format_id] %}
+                {% endif %}
+
+                <td>{% if file %}
+                        {% if not file.progress and file.filesize %}~{% endif %}{{ (file.filesize / 1024) | round(1) }} MB
+                    {% else %}
+                        {% if format.filesize is defined and format.filesize %}
+                            {{ (format.filesize / 1024 / 1024) |round(1) }}
+                        {% else %}{{ format.size }}
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if file %}
+                        {% if file.finishedAt %}
+                            <a class="btn btn-success btn-sm" href="{{ path('download_file', {'id': file.id}) }}">Pobierz</a>
+                            <a class="btn btn-primary btn-sm" href="{{ path('watch_video', {'id': file.id}) }}">{% if file.format == 'mp3' %}Słuchaj online{% else %}Oglądaj online{% endif %}</a>
+                        {% elseif file.progress > 0 %}
+                            Plik jest obecnie pobierany, progress: {{ file.progress }}%
+                        {% else %}
+                            Plik został już dodany do kolejki
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ path('yt_queue', {'hash':id, format:format.format_id}) }}">Dodaj do kolejki</a>
+                    {% endif %}
+                </td>
+
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock body %}

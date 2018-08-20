@@ -1,15 +1,20 @@
 {% spaceless %}
 {% for file in files %}
     <tr>
-        <td><a href="{{ path('yt_info', {'hash': file.hash}) }}">{{ file.title }}</a></td>
-{#        <td>{% if file.format == 'mp3' %}mp3{% else %}{{ file.width }} x {{ file.height }}{% endif %}</td>#}
-        <td style="text-align: right;">{% if file.format == 'mp3' %}<span style="color: #060">mp3</span>{% else %}{{ file.height }}p{% endif %}</td>
-        <td style="text-align: right;">{{ (file.filesize / 1024)|round(1)|number_format() }} MB</td>
-        <td style="text-align: right;">{% if file.length %}{{ file.length|time }}{% endif %}</td>
+        {% set json = file.json|jsonDecode %}
+        {{ dump(json) }}
+        <td>
+            <img src="{{ json.thumbnail }}" class="filelist_thumbnail" alt="thumbnail">
+        </td>
+        <td ><a href="{{ path('yt_info', {'hash': json.id}) }}">{{ json.title }}</a></td>
+{#        <td>{% if json.format == 'mp3' %}mp3{% else %}{{ json.width }} x {{ json.height }}{% endif %}</td>#}
+        <td >{% if json.format == 'mp3' %}<span style="color: #060">mp3</span>{% else %}{{ json.height }}p{% endif %}</td>
+        <td >{{ (file.filesize / 1024)|round(1)|number_format() }} MB</td>
+        <td >{{ json.duration|time }}</td>
         {#                <td>{{ file.downloads }}</td>#}
         <td style="white-space: nowrap">
             <a class="btn btn-xs btn-primary" href="{{ path('download_file', {'id': file.id}) }}">Pobierz</a>
-            <a class="btn btn-xs btn-success" href="{{ path('watch_video', {'id': file.id}) }}">{% if file.format == 'mp3' %}Słuchaj{% else %}Oglądaj{% endif %}</a>
+            <a class="btn btn-xs btn-success" href="{{ path('watch_video', {'id': file.id}) }}">{% if json.format == 'mp3' %}Słuchaj{% else %}Oglądaj{% endif %}</a>
         </td>
     </tr>
 {% endfor %}

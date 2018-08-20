@@ -5,15 +5,18 @@
 <p><span class="pull-right">Pobrano łącznie z yt: <strong>{{ downloaded }}</strong> GiB</span><span>Filtruj pobrane pliki:</span></p>
 <input id="filelist_filter" type="search" class="form-control" placeholder="Wyszukaj..."/>
 
-    <table class="table">
-        <tr>
-            <th>Nazwa</th>
-            <th>Rozdzielczość</th>
-            <th>Wielkość</th>
-            <th>Długość</th>
-{#            <th>Pobrane</th>#}
-            <th>Akcje</th>
-        </tr>
+    <table class="table downloaded_list">
+        <thead>
+            <tr>
+                <th>Miniaturka</th>
+                <th>Nazwa</th>
+                <th>Rozdzielczość</th>
+                <th>Wielkość</th>
+                <th>Długość</th>
+    {#            <th>Pobrane</th>#}
+                <th>Akcje</th>
+            </tr>
+        </thead>
         <tbody id="filelist">
             {{ render(controller("AppBundle:Default:_filelist", { page: page })) }}
         </tbody>
