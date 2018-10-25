@@ -169,9 +169,6 @@ class DownloadController extends Controller
 
     private function checkMediaExist(string $hash, $categories = null, string $page = 'youtube')
     {
-
-        var_dump($categories);
-
         /** @var Media $media */
         $media = $this->media->findOneByHash($hash);
 
@@ -180,8 +177,6 @@ class DownloadController extends Controller
             $media = new Media();
             $media->setHash($hash);
             $media->setCreatedBy($this->downloadService->getUser());
-
-            var_dump('new');
 
             $this->entityManager->persist($media);
         }
